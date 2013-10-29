@@ -45,5 +45,23 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	@Override
+	protected void onPause() {
+	    super.onPause();
+	 
+	    if (rendererSet) {
+	        glSurfaceView.onPause();
+	    }
+	}
+	 
+	@Override
+	protected void onResume() {
+	    super.onResume();
+	 
+	    if (rendererSet) {
+	        glSurfaceView.onResume();
+	    }
+	}
 
 }
