@@ -11,9 +11,6 @@ extern "C" {
 #endif
 
 
-#ifdef __cplusplus
-}
-#endif
 /*
  * Class:     com_opengltutorial_opengles2tutorial_GameLibJNIWrapper
  * Method:    on_surface_created
@@ -65,5 +62,9 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 (JNIEnv * env, jclass cls) {
 	on_touch();
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
