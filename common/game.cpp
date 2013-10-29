@@ -246,6 +246,7 @@ static void create_shaders(void) {
 		//      printf("Error: fragment shader did not compile!\n");
 		exit(1);
 	}
+
 	unloadshader((GLubyte**) shadersource);
 
 	const char fragname[] = "simplevert.vert";
