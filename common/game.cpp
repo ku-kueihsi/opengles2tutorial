@@ -88,14 +88,14 @@ static GLint attr_pos = 0, attr_color = 1;
 
 void set_vertshader_file(FILE * pfile){
 	vertshader_file = pfile;
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(vertshader_file));
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", vertshader_file);
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(vertshader_file));
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", vertshader_file);
 }
 
 void set_fragshader_file(FILE * pfile){
 	fragshader_file = pfile;
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(fragshader_file));
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", fragshader_file);
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(fragshader_file));
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", fragshader_file);
 }
 
 static void make_z_rot_matrix(GLfloat angle, GLfloat *m) {
@@ -172,7 +172,7 @@ static void draw(void) {
 }
 
 GLuint LoadShader(FILE * vfile, FILE * ffile){
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "loading shaders");
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "loading shaders");
 	if (!vfile || !ffile){
 		exit(1);
 	}
@@ -187,8 +187,8 @@ GLuint LoadShader(FILE * vfile, FILE * ffile){
 	fread(fragShaderText, len, sizeof(char), ffile);
 	fragShaderText[len] = '\0';
 
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s\n", vertShaderText);
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s\n", fragShaderText);
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s\n", vertShaderText);
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s\n", fragShaderText);
 
 	GLuint fragShader, vertShader, program;
 	GLint stat;

@@ -13,15 +13,7 @@ public class GameLibJNIWrapper {
     }
 	
 	public static AssetManager assMgr; // asset manager, pass asset info to ndk
-//    
-//    public static byte[] getAssetContents(String path) throws IOException
-//    {
-//	    InputStream is = assMgr.open(path, AssetManager.ACCESS_BUFFER);
-//	    byte buffer[] = new byte[is.available()];
-//	    is.read(buffer);
-//	    return buffer;
-//    }
-//	private AssetManager mgr;
+
 	public static void loadassets(){
 		load(assMgr);
 	}

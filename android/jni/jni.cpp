@@ -65,10 +65,10 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper_on_1surface_1created
 (JNIEnv * env, jclass cls) {
 //	g_env = env; // global variables, containing assets info
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "init gl");
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "init gl");
 	set_vertshader_file(android_fopen((const char*) "simplevert.vert", (const char*)"r"));
 	set_fragshader_file(android_fopen((const char*) "simplefrag.frag", (const char*)"r"));
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "pass shader files done");
+//	__android_log_print(ANDROID_LOG_VERBOSE, "test", "pass shader files done");
 	on_surface_created();
 }
 
