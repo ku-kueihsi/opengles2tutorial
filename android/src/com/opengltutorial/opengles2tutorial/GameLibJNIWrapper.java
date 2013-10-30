@@ -1,16 +1,18 @@
 package com.opengltutorial.opengles2tutorial;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import android.content.res.AssetManager;
+
+//import java.io.IOException;
+//import java.io.InputStream;
+
+//import android.content.res.AssetManager;
 
 public class GameLibJNIWrapper {
 	static {
         System.loadLibrary("game");
     }
 	
-//	public static AssetManager assMgr; // asset manager, pass asset info to ndk
+	public static AssetManager assMgr; // asset manager, pass asset info to ndk
 //    
 //    public static byte[] getAssetContents(String path) throws IOException
 //    {
@@ -19,6 +21,13 @@ public class GameLibJNIWrapper {
 //	    is.read(buffer);
 //	    return buffer;
 //    }
+//	private AssetManager mgr;
+	public static void loadassets(){
+		load(assMgr);
+	}
+	
+	private static native void load(AssetManager assMgr);
+
     
     public static native void on_surface_created();
  

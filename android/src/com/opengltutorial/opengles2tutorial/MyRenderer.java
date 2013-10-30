@@ -22,6 +22,7 @@ public class MyRenderer implements Renderer{
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		// TODO Auto-generated method stub
+		GameLibJNIWrapper.loadassets();
 		GameLibJNIWrapper.on_surface_created();
 	}
 	
