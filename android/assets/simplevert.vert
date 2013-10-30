@@ -5,5 +5,5 @@ attribute vec4 color;
 varying vec4 v_color;
 void main() {
    gl_Position = modelviewProjection * pos;
-   v_color = color;\n"
+   v_color = color;
 }

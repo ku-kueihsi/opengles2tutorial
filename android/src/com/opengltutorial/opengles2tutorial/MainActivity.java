@@ -13,7 +13,8 @@ public class MainActivity extends Activity {
 
 	private MyGLSurfaceView glSurfaceView;
 	private boolean rendererSet;
-
+    
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,6 +38,7 @@ public class MainActivity extends Activity {
 					Toast.LENGTH_LONG).show();
 			return;
 		}
+//		GameLibJNIWrapper.assMgr = getAssets();
 	}
 
 	@Override

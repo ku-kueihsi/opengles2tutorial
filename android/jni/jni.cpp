@@ -6,6 +6,9 @@
 
 #ifndef _Included_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper
 #define _Included_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper
+
+JNIEnv* g_env;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -20,6 +23,7 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
   (JNIEnv *, jclass);
 JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper_on_1surface_1created
 (JNIEnv * env, jclass cls) {
+	g_env = env; // global variables, containing assets info
 	on_surface_created();
 }
 
