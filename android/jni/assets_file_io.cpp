@@ -30,9 +30,9 @@ void android_fopen_set_asset_manager(AAssetManager* manager) {
 
 FILE* android_fopen(const char* fname, const char* mode) {
   if(mode[0] == 'w') return NULL;
-  __android_log_print(ANDROID_LOG_VERBOSE, "test", "1\n");
+//  __android_log_print(ANDROID_LOG_VERBOSE, "test", "opening\n");
   AAsset* asset = AAssetManager_open(android_asset_manager, fname, 0);
-  __android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", asset);
+//  __android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", asset);
   if(!asset) return NULL;
   return funopen(asset, android_read, android_write, android_seek, android_close);
 }

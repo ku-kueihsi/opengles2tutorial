@@ -20,6 +20,16 @@ extern "C" {
 
 using namespace std;
 
+size_t filelen(FILE * pfile) {
+	if (!pfile){
+		return 0;
+	}
+	fseek(pfile, NULL, SEEK_END);
+	size_t filesize = ftell(pfile);
+	rewind (pfile);
+	return filesize;
+}
+
 template<class T>
 void SimpleCross(T v1x, T v1y, T v1z, T v2x, T v2y, T v2z, T &v3x, T &v3y,
 		T &v3z) {
@@ -78,10 +88,14 @@ static GLint attr_pos = 0, attr_color = 1;
 
 void set_vertshader_file(FILE * pfile){
 	vertshader_file = pfile;
+	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(vertshader_file));
+	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", vertshader_file);
 }
 
 void set_fragshader_file(FILE * pfile){
 	fragshader_file = pfile;
+	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(fragshader_file));
+	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", fragshader_file);
 }
 
 static void make_z_rot_matrix(GLfloat angle, GLfloat *m) {
@@ -157,142 +171,8 @@ static void draw(void) {
 	}
 }
 
-//std::string readFile(const char *filePath) {
-//    std::string content;
-//    std::ifstream fileStream(filePath, std::ios::in);
-//
-//    if(!fileStream.is_open()) {
-//        std::cerr << "Could not read file " << filePath << ". File does not exist." << std::endl;
-//        return "";
-//    }
-//
-//    std::string line = "";
-//    while(!fileStream.eof()) {
-//        std::getline(fileStream, line);
-//        content.append(line + "\n");
-//    }
-//
-//    fileStream.close();
-//    return content;
-//}
-//
-//GLuint LoadShader(const char *vertex_path, const char *fragment_path) {
-//    GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
-//    GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-//
-//    // Read shaders
-//    std::string vertShaderStr = readFile(vertex_path);
-//    std::string fragShaderStr = readFile(fragment_path);
-//    const char *vertShaderSrc = vertShaderStr.c_str();
-//    const char *fragShaderSrc = fragShaderStr.c_str();
-//
-//    GLint result = GL_FALSE;
-//    int logLength;
-//
-//    // Compile vertex shader
-//    std::cout << "Compiling vertex shader." << std::endl;
-//    glShaderSource(vertShader, 1, &vertShaderSrc, NULL);
-//    glCompileShader(vertShader);
-//
-//    // Check vertex shader
-//    glGetShaderiv(vertShader, GL_COMPILE_STATUS, &result);
-//    glGetShaderiv(vertShader, GL_INFO_LOG_LENGTH, &logLength);
-//    std::vector<char> vertShaderError(logLength);
-//    glGetShaderInfoLog(vertShader, logLength, NULL, &vertShaderError[0]);
-//    std::cout << &vertShaderError[0] << std::endl;
-//
-//    // Compile fragment shader
-//    std::cout << "Compiling fragment shader." << std::endl;
-//    glShaderSource(fragShader, 1, &fragShaderSrc, NULL);
-//    glCompileShader(fragShader);
-//
-//    // Check fragment shader
-//    glGetShaderiv(fragShader, GL_COMPILE_STATUS, &result);
-//    glGetShaderiv(fragShader, GL_INFO_LOG_LENGTH, &logLength);
-//    std::vector<char> fragShaderError(logLength);
-//    glGetShaderInfoLog(fragShader, logLength, NULL, &fragShaderError[0]);
-//    std::cout << &fragShaderError[0] << std::endl;
-//
-//    std::cout << "Linking program" << std::endl;
-//    GLuint program = glCreateProgram();
-//    glAttachShader(program, vertShader);
-//    glAttachShader(program, fragShader);
-//    glLinkProgram(program);
-//
-//    glGetProgramiv(program, GL_LINK_STATUS, &result);
-//    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-//    std::vector<char> programError( (logLength > 1) ? logLength : 1 );
-//    glGetProgramInfoLog(program, logLength, NULL, &programError[0]);
-//    std::cout << &programError[0] << std::endl;
-//
-//    glDeleteShader(vertShader);
-//    glDeleteShader(fragShader);
-//
-//    return program;
-//}
-
-//unsigned long getFileLength(ifstream& file) {
-//	if (!file.good())
-//		return 0;
-//
-//	unsigned long pos = file.tellg();
-//	file.seekg(0, ios::end);
-//	unsigned long len = file.tellg();
-//	file.seekg(ios::beg);
-//
-//	return len;
-//}
-//
-//int loadshader(char* filename, GLchar** ShaderSource, unsigned long &len) {
-//	ifstream file;
-//	file.open(filename, ios::in); // opens as ASCII!
-//	if (!file)
-//		return -1;
-//
-//	len = getFileLength(file);
-//
-//	if (len == 0)
-//		return -2;   // Error: Empty File
-//
-//	*ShaderSource = (GLchar *) new char[len + 1];
-//	if (*ShaderSource == 0)
-//		return -3;   // can't reserve memory
-//
-//	// len isn't always strlen cause some characters are stripped in ascii read...
-//	// it is important to 0-terminate the real length later, len is just max possible value...
-//	*ShaderSource[len] = 0;
-//
-//	unsigned int i = 0;
-//	while (file.good()) {
-//		*ShaderSource[i] = file.get();       // get character from file.
-//		if (!file.eof())
-//			i++;
-//	}
-//
-//	*ShaderSource[i] = 0;  // 0-terminate it at the correct position
-//
-//	file.close();
-//
-//	return 0; // No Error
-//}
-//
-//int unloadshader(GLubyte** ShaderSource) {
-//	if (*ShaderSource != 0)
-//		delete[] *ShaderSource;
-//	*ShaderSource = 0;
-//}
-
-size_t filelen(FILE * pfile) {
-	if (!pfile){
-		return 0;
-	}
-	fseek(pfile, NULL, SEEK_END);
-	size_t filesize = ftell(pfile);
-	rewind (pfile);
-	return filesize;
-}
-
 GLuint LoadShader(FILE * vfile, FILE * ffile){
+	__android_log_print(ANDROID_LOG_VERBOSE, "test", "loading shaders");
 	if (!vfile || !ffile){
 		exit(1);
 	}
@@ -306,6 +186,9 @@ GLuint LoadShader(FILE * vfile, FILE * ffile){
 	char * fragShaderText = new char[len + 1];
 	fread(fragShaderText, len, sizeof(char), ffile);
 	fragShaderText[len] = '\0';
+
+	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s\n", vertShaderText);
+	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s\n", fragShaderText);
 
 	GLuint fragShader, vertShader, program;
 	GLint stat;
@@ -338,48 +221,49 @@ GLuint LoadShader(FILE * vfile, FILE * ffile){
 }
 
 static void create_shaders(void) {
-	static const char *fragShaderText = "precision mediump float;\n"
-			"varying vec4 v_color;\n"
-			"void main() {\n"
-			"   gl_FragColor = v_color;\n"
-			"}\n";
-	static const char *vertShaderText = "precision mediump float;\n"
-			"uniform mat4 modelviewProjection;\n"
-			"attribute vec4 pos;\n"
-			"attribute vec4 color;\n"
-			"varying vec4 v_color;\n"
-			"void main() {\n"
-			"   gl_Position = modelviewProjection * pos;\n"
-			"   v_color = color;\n"
-			"}\n";
-	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s", fragShaderText);
+//	static const char *fragShaderText = "precision mediump float;\n"
+//			"varying vec4 v_color;\n"
+//			"void main() {\n"
+//			"   gl_FragColor = v_color;\n"
+//			"}\n";
+//	static const char *vertShaderText = "precision mediump float;\n"
+//			"uniform mat4 modelviewProjection;\n"
+//			"attribute vec4 pos;\n"
+//			"attribute vec4 color;\n"
+//			"varying vec4 v_color;\n"
+//			"void main() {\n"
+//			"   gl_Position = modelviewProjection * pos;\n"
+//			"   v_color = color;\n"
+//			"}\n";
+////	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s", vertShaderText);
+////	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s", fragShaderText);
 	GLuint fragShader, vertShader, program;
 	GLint stat;
 
-	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShader, 1, (const char **) &fragShaderText, NULL);
-	glCompileShader(fragShader);
-	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &stat);
-	if (!stat) {
-//      printf("Error: fragment shader did not compile!\n");
-		exit(1);
-	}
+//	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+//	glShaderSource(fragShader, 1, (const char **) &fragShaderText, NULL);
+//	glCompileShader(fragShader);
+//	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &stat);
+//	if (!stat) {
+////      printf("Error: fragment shader did not compile!\n");
+//		exit(1);
+//	}
+//
+//	vertShader = glCreateShader(GL_VERTEX_SHADER);
+//	glShaderSource(vertShader, 1, (const char **) &vertShaderText, NULL);
+//	glCompileShader(vertShader);
+//	glGetShaderiv(vertShader, GL_COMPILE_STATUS, &stat);
+//	if (!stat) {
+////      printf("Error: vertex shader did not compile!\n");
+//		exit(1);
+//	}
+//
+//
+//	program = glCreateProgram();
+//	glAttachShader(program, fragShader);
+//	glAttachShader(program, vertShader);
 
-	vertShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertShader, 1, (const char **) &vertShaderText, NULL);
-	glCompileShader(vertShader);
-	glGetShaderiv(vertShader, GL_COMPILE_STATUS, &stat);
-	if (!stat) {
-//      printf("Error: vertex shader did not compile!\n");
-		exit(1);
-	}
-
-
-	program = glCreateProgram();
-	glAttachShader(program, fragShader);
-	glAttachShader(program, vertShader);
-
-//	program = LoadShader(vertshader_file, fragshader_file);
+	program = LoadShader(vertshader_file, fragshader_file);
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_LINK_STATUS, &stat);
