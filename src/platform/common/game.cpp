@@ -22,6 +22,8 @@ extern "C" {
 using namespace std;
 
 using namespace Eigen;
+
+#define EPS 0.00001
 //int testf() {
 //	Matrix<int, 2, 2, ColMajor> m;
 //	m(0, 0) = 3;
@@ -172,6 +174,44 @@ void perspective_matrix(Tfloat angleOfView, Tfloat aspectRatio, Tfloat near, Tfl
     mat(3, 3) = 0.0;
 }
 
+template<class Tfloat>
+void camera_matrix(Matrix<Tfloat, 4, 4, ColMajor > &mat,
+		const Matrix<Tfloat, 3, 1, ColMajor > &direction,
+		const Matrix<Tfloat, 3, 1, ColMajor > &camera,
+		const Matrix<Tfloat, 3, 1, ColMajor > &camera_up
+		) {
+	//generate the camera matrix
+	//create template vector
+	Matrix<Tfloat, 3, 1, ColMajor > right, up, back;
+	Matrix<Tfloat, 4, 4, ColMajor > tmat, rmat;
+	back = -direction;
+	back.normalize();
+	right = camera_up.cross(back);
+	right.normalize();
+	up = back.cross(right);
+
+	if (EPS > back.norm() || EPS > up.norm() || EPS > right.norm()){
+		mat = Matrix<Tfloat, 4, 4, ColMajor >::Identity();
+		return;
+	}
+
+	//rmat.block(0, 0, 1, 3) = right;
+	//rmat.block(1, 0, 1, 3) = up;
+	//rmat.block(2, 0, 1, 3) = back;
+	for (int i = 0; i < 3; ++i) {
+		rmat(0, i) = right(i);
+		rmat(1, i) = up(i);
+		rmat(2, i) = back(i);
+		rmat(3, i) = 0.0f;
+		rmat(i, 3) = 0.0f;
+	}
+	rmat(3, 3) = 1;
+
+	translation_matrix(-camera(0), -camera(1), -camera(2), tmat);
+
+	mat = rmat * tmat;
+}
+
 static void draw(void) {
 //	GLfloat mat[16], rot[16], scale[16];
 //
@@ -181,15 +221,19 @@ static void draw(void) {
 //	mul_matrix(mat, rot, scale);
 //	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, mat);
 
-	Matrix<GLfloat, 4, 4, ColMajor> pers_view_mat, rmat, smat, tmat, perspective_mat;
+	Matrix<GLfloat, 3, 1, ColMajor > direction(0.0f, 0.0f, -1.0f), camera_pos(0.0f, 0.0f, 5.0f), up(0.0f, 1.0f, 0.0f);
+
+	Matrix<GLfloat, 4, 4, ColMajor> pers_view_mat, rmat, smat, tmat, perspective_mat, camera_mat;
 
 //	scale_matrix(0.5f, smat.data());
 //	rotation_matrix(0.0f, 0.0f, 1.0f, view_rotx, rmat.data());
 	scale_matrix(0.5f, smat);
-	rotation_matrix(0.0f, 0.0f, 1.0f, view_rotx, rmat);
+//	rotation_matrix(0.0f, 0.0f, 1.0f, view_rotx, rmat);
+	rotation_matrix(1.0f, 1.0f, 1.0f, view_rotx, rmat);
 	translation_matrix(0.0f, 0.0f, -5.0f, tmat);
 	perspective_matrix((GLfloat)3.14f * (GLfloat)0.25f, (GLfloat)screen_width / (GLfloat)screen_height, (GLfloat)0.01f, (GLfloat)1000.0f, perspective_mat);
-	pers_view_mat = perspective_mat * tmat * smat * rmat;
+	camera_matrix(camera_mat, direction, camera_pos, up);
+	pers_view_mat = perspective_mat * camera_mat * tmat * smat * rmat;
 	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, pers_view_mat.data());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
