@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.view.Menu;
 import android.widget.Toast;
-import android.content.res.AssetManager;
+//import android.content.res.AssetManager;
 
 
 public class MainActivity extends Activity {

@@ -9,7 +9,13 @@
 #define GLWORLD_H_
 
 
+namespace GLWD{
 
+class Object{
+
+};
+
+}
 
 
 #endif /* GLWORLD_H_ */
