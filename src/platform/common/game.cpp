@@ -44,11 +44,16 @@ size_t filelen(FILE * pfile) {
 	return filesize;
 }
 
+//GL global
 static GLfloat view_rotx = 0.0; // view_roty = 0.0;
 static FILE * vertshader_file = NULL, *fragshader_file = NULL;
 
 static GLint u_matrix = -1;
 static GLint attr_pos = 0, attr_color = 1;
+
+static GLint screen_width = 0;
+static GLint screen_height = 0;
+//end of GL global
 
 void set_vertshader_file(FILE * pfile) {
 	vertshader_file = pfile;
@@ -62,15 +67,13 @@ void set_fragshader_file(FILE * pfile) {
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", fragshader_file);
 }
 
-//template <class Tfloat>
-//inline void rotation_row_vector(int u, v, w)
+
 
 template<class Tfloat>
-void rotation_matrix(Tfloat u, Tfloat v, Tfloat w, Tfloat theta, Tfloat *m) {
+void rotation_matrix(Tfloat u, Tfloat v, Tfloat w, Tfloat theta, Matrix<Tfloat, 4, 4, ColMajor > &mat) {
 	//generate the rotation matrix, rotate theta around vector (u, v, w) at point (a, b, c)
 
 	//create template matrix and direction vector
-	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
 	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
 	Matrix < Tfloat, 3, 1, ColMajor > vec(u, v, w);
 
@@ -104,21 +107,13 @@ void rotation_matrix(Tfloat u, Tfloat v, Tfloat w, Tfloat theta, Tfloat *m) {
 	sin_part = u * sintheta;
 	mat(1, 2) = cos_part - sin_part;
 	mat(1, 2) = cos_part + sin_part;
-
-//	//fill zeros
-//	for (int i = 0; i < 3; ++i){
-//		mat(i, 3) = 0;
-//		mat(3, i) = 0;
-//	}
-//	mat(3, 3) = 1;
 }
 
 template<class Tfloat>
-void scale_matrix(Tfloat xs, Tfloat ys, Tfloat zs, Tfloat *m) {
+void scale_matrix(Tfloat xs, Tfloat ys, Tfloat zs, Matrix<Tfloat, 4, 4, ColMajor > &mat) {
 	//generate the scale matrix
 
 	//create template matrix
-	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
 	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
 	mat(0, 0) = xs;
 	mat(1, 1) = ys;
@@ -126,66 +121,55 @@ void scale_matrix(Tfloat xs, Tfloat ys, Tfloat zs, Tfloat *m) {
 }
 
 template<class Tfloat>
-void scale_matrix(Tfloat s, Tfloat *m) {
+void scale_matrix(Tfloat s, Matrix<Tfloat, 4, 4, ColMajor > &mat) {
 	//generate the scale matrix
-	scale_matrix(s, s, s, m);
+	scale_matrix(s, s, s, mat);
 }
 
 template<class Tfloat>
-void tranlation_matrix(Tfloat x, Tfloat y, Tfloat z, Tfloat *m) {
+void translation_matrix(Tfloat x, Tfloat y, Tfloat z, Matrix<Tfloat, 4, 4, ColMajor > &mat) {
 	//generate the translation matrix
 	//create template matrix
-	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
 	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
 	mat(0, 3) = x;
 	mat(1, 3) = y;
 	mat(2, 3) = z;
 }
 
-static void make_z_rot_matrix(GLfloat angle, GLfloat *m) {
-	float c = cos(angle * M_PI / 180.0);
-	float s = sin(angle * M_PI / 180.0);
-//   int i;
-//   for (i = 0; i < 16; i++)
-//      m[i] = 0.0;
-	memset(m, 0, sizeof(m) * 16);
-	m[0] = m[5] = m[10] = m[15] = 1.0;
+template<class Tfloat>
+//void perspective_matrix(Tfloat angleOfView = 45.0, Tfloat aspectRatio = 0.75, Tfloat near = 0.001, Tfloat far = 1000.0, Matrix<Tfloat, 4, 4, ColMajor > &mat) {
+void perspective_matrix(Tfloat angleOfView, Tfloat aspectRatio, Tfloat near, Tfloat far, Matrix<Tfloat, 4, 4, ColMajor > &mat) {
+	//generate the perspective matrix
+	//radians angleOfView
+	//aspectRatio = width / height
 
-	m[0] = c;
-	m[1] = s;
-	m[4] = -s;
-	m[5] = c;
-}
+    // Some calculus before the formula.
+    Tfloat size = near * tan(angleOfView / 2.0);
+    Tfloat left = -size, right = size, bottom = -size / aspectRatio, top = size / aspectRatio;
 
-static void make_scale_matrix(GLfloat xs, GLfloat ys, GLfloat zs, GLfloat *m) {
-//   int i;
-//   for (i = 0; i < 16; i++)
-//      m[i] = 0.0;
-	memset(m, 0, sizeof(m) * 16);
-	m[0] = xs;
-	m[5] = ys;
-	m[10] = zs;
-	m[15] = 1.0;
-}
+    // First Column
+    mat(0, 0) = 2 * near / (right - left);
+    mat(1, 0) = 0.0;
+    mat(2, 0) = 0.0;
+    mat(3, 0) = 0.0;
 
-static void mul_matrix(GLfloat *prod, const GLfloat *a, const GLfloat *b) {
-#define A(row,col)  a[(col<<2)+row]
-#define B(row,col)  b[(col<<2)+row]
-#define P(row,col)  p[(col<<2)+row]
-	GLfloat p[16];
-	GLint i;
-	for (i = 0; i < 4; i++) {
-		const GLfloat ai0 = A(i, 0), ai1 = A(i, 1), ai2 = A(i, 2), ai3 = A(i,
-				3);
-		P(i,0)= ai0 * B(0,0) + ai1 * B(1,0) + ai2 * B(2,0) + ai3 * B(3,0);
-		P(i,1)= ai0 * B(0,1) + ai1 * B(1,1) + ai2 * B(2,1) + ai3 * B(3,1);
-		P(i,2)= ai0 * B(0,2) + ai1 * B(1,2) + ai2 * B(2,2) + ai3 * B(3,2);
-		P(i,3)= ai0 * B(0,3) + ai1 * B(1,3) + ai2 * B(2,3) + ai3 * B(3,3);
-	}
-	memcpy(prod, p, sizeof(p));
-#undef A
-#undef B
-#undef P
+    // Second Column
+    mat(0, 1) = 0.0;
+    mat(1, 1) = 2 * near / (top - bottom);
+    mat(2, 1) = 0.0;
+    mat(3, 1) = 0.0;
+
+    // Third Column
+    mat(0, 2) = (right + left) / (right - left);
+    mat(1, 2) = (top + bottom) / (top - bottom);
+    mat(2, 2) = -(far + near) / (far - near);
+    mat(3, 2) = -1;
+
+    // Fourth Column
+    mat(0, 3) = 0.0;
+    mat(1, 3) = 0.0;
+    mat(2, 3) = -(2 * far * near) / (far - near);
+    mat(3, 3) = 0.0;
 }
 
 static void draw(void) {
@@ -197,12 +181,16 @@ static void draw(void) {
 //	mul_matrix(mat, rot, scale);
 //	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, mat);
 
-	Matrix<GLfloat, 4, 4, ColMajor > pro_mat, rmat, smat, tmat;
+	Matrix<GLfloat, 4, 4, ColMajor> pers_view_mat, rmat, smat, tmat, perspective_mat;
 
-	scale_matrix(0.5f, smat.data());
-	rotation_matrix(0.0f, 0.0f, 1.0f, view_rotx, rmat.data());
-	pro_mat = smat * rmat;
-	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, pro_mat.data());
+//	scale_matrix(0.5f, smat.data());
+//	rotation_matrix(0.0f, 0.0f, 1.0f, view_rotx, rmat.data());
+	scale_matrix(0.5f, smat);
+	rotation_matrix(0.0f, 0.0f, 1.0f, view_rotx, rmat);
+	translation_matrix(0.0f, 0.0f, -5.0f, tmat);
+	perspective_matrix((GLfloat)3.14f * (GLfloat)0.25f, (GLfloat)screen_width / (GLfloat)screen_height, (GLfloat)0.01f, (GLfloat)1000.0f, perspective_mat);
+	pers_view_mat = perspective_mat * tmat * smat * rmat;
+	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, pers_view_mat.data());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -359,12 +347,12 @@ void on_surface_created() {
 
 void on_surface_changed(int width, int height) {
 	// No-op
-	GLint w = width;
-	GLint h = height;
-	if (h == 0)
-		h = 1;
+	screen_width = width;
+	screen_height = height;
+	if (screen_height == 0)
+		screen_height = 1;
 	// Set the viewport to be the entire window
-	glViewport(0, 0, w, h);
+	glViewport(0, 0, screen_width, screen_height);
 
 }
 
@@ -382,3 +370,129 @@ void on_draw_frame() {
 	// Reset transformations
 
 }
+
+//static void make_z_rot_matrix(GLfloat angle, GLfloat *m) {
+//	float c = cos(angle * M_PI / 180.0);
+//	float s = sin(angle * M_PI / 180.0);
+////   int i;
+////   for (i = 0; i < 16; i++)
+////      m[i] = 0.0;
+//	memset(m, 0, sizeof(m) * 16);
+//	m[0] = m[5] = m[10] = m[15] = 1.0;
+//
+//	m[0] = c;
+//	m[1] = s;
+//	m[4] = -s;
+//	m[5] = c;
+//}
+//
+//static void make_scale_matrix(GLfloat xs, GLfloat ys, GLfloat zs, GLfloat *m) {
+////   int i;
+////   for (i = 0; i < 16; i++)
+////      m[i] = 0.0;
+//	memset(m, 0, sizeof(m) * 16);
+//	m[0] = xs;
+//	m[5] = ys;
+//	m[10] = zs;
+//	m[15] = 1.0;
+//}
+//
+//static void mul_matrix(GLfloat *prod, const GLfloat *a, const GLfloat *b) {
+//#define A(row,col)  a[(col<<2)+row]
+//#define B(row,col)  b[(col<<2)+row]
+//#define P(row,col)  p[(col<<2)+row]
+//	GLfloat p[16];
+//	GLint i;
+//	for (i = 0; i < 4; i++) {
+//		const GLfloat ai0 = A(i, 0), ai1 = A(i, 1), ai2 = A(i, 2), ai3 = A(i,
+//				3);
+//		P(i,0)= ai0 * B(0,0) + ai1 * B(1,0) + ai2 * B(2,0) + ai3 * B(3,0);
+//		P(i,1)= ai0 * B(0,1) + ai1 * B(1,1) + ai2 * B(2,1) + ai3 * B(3,1);
+//		P(i,2)= ai0 * B(0,2) + ai1 * B(1,2) + ai2 * B(2,2) + ai3 * B(3,2);
+//		P(i,3)= ai0 * B(0,3) + ai1 * B(1,3) + ai2 * B(2,3) + ai3 * B(3,3);
+//	}
+//	memcpy(prod, p, sizeof(p));
+//#undef A
+//#undef B
+//#undef P
+//}
+
+//template <class Tfloat>
+//inline void rotation_row_vector(int u, v, w)
+
+//template<class Tfloat>
+//void rotation_matrix(Tfloat u, Tfloat v, Tfloat w, Tfloat theta, Tfloat *m) {
+//	//generate the rotation matrix, rotate theta around vector (u, v, w) at point (a, b, c)
+//
+//	//create template matrix and direction vector
+//	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
+//	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
+//	Matrix < Tfloat, 3, 1, ColMajor > vec(u, v, w);
+//
+//	//normalize the direction vector
+//	vec.normalize();
+//	u = vec(0);
+//	v = vec(1);
+//	w = vec(2);
+//
+//	//temp variables
+//	Tfloat costheta = cos(theta), sintheta = sin(theta);
+//	Tfloat complement_costheta = 1 - costheta;
+//	Tfloat u2 = u * u;
+//	Tfloat v2 = v * v;
+//	Tfloat w2 = w * w;
+//	Tfloat cos_part, sin_part;
+//
+//	//3 x 3 rotation
+//	mat(0, 0) = u2 + (v2 + w2) * costheta;
+//	mat(1, 1) = v2 + (u2 + w2) * costheta;
+//	mat(2, 2) = w2 + (u2 + v2) * costheta;
+//	cos_part = u * v * (complement_costheta);
+//	sin_part = w * sintheta;
+//	mat(0, 1) = cos_part - sin_part;
+//	mat(1, 0) = cos_part + sin_part;
+//	cos_part = u * w * (complement_costheta);
+//	sin_part = v * sintheta;
+//	mat(0, 2) = cos_part + sin_part;
+//	mat(2, 0) = cos_part - sin_part;
+//	cos_part = v * w * (complement_costheta);
+//	sin_part = u * sintheta;
+//	mat(1, 2) = cos_part - sin_part;
+//	mat(1, 2) = cos_part + sin_part;
+//
+////	//fill zeros
+////	for (int i = 0; i < 3; ++i){
+////		mat(i, 3) = 0;
+////		mat(3, i) = 0;
+////	}
+////	mat(3, 3) = 1;
+//}
+//
+//template<class Tfloat>
+//void scale_matrix(Tfloat xs, Tfloat ys, Tfloat zs, Tfloat *m) {
+//	//generate the scale matrix
+//
+//	//create template matrix
+//	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
+//	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
+//	mat(0, 0) = xs;
+//	mat(1, 1) = ys;
+//	mat(2, 2) = zs;
+//}
+//
+//template<class Tfloat>
+//void scale_matrix(Tfloat s, Tfloat *m) {
+//	//generate the scale matrix
+//	scale_matrix(s, s, s, m);
+//}
+//
+//template<class Tfloat>
+//void tranlation_matrix(Tfloat x, Tfloat y, Tfloat z, Tfloat *m) {
+//	//generate the translation matrix
+//	//create template matrix
+//	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
+//	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
+//	mat(0, 3) = x;
+//	mat(1, 3) = y;
+//	mat(2, 3) = z;
+//}
