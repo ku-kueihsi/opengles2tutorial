@@ -17,85 +17,129 @@ extern "C" {
 #include <string.h>
 #include <cstdlib>
 #include <cstdio>
+#include <Eigen/Dense>
 
 using namespace std;
 
+using namespace Eigen;
+//int testf() {
+//	Matrix<int, 2, 2, ColMajor> m;
+//	m(0, 0) = 3;
+//	m(1, 0) = 2.5;
+//	m(0, 1) = -1;
+//	m(1, 1) = m(1, 0) + m(0, 1);
+////	std::cout << m << std::endl;
+//}
+
+typedef Matrix<GLfloat, 4, 4, ColMajor> GLmatrix4f;
+typedef Matrix<GLfloat, 4, 1, ColMajor> GLvector4f;
+
 size_t filelen(FILE * pfile) {
-	if (!pfile){
+	if (!pfile) {
 		return 0;
 	}
 	fseek(pfile, NULL, SEEK_END);
 	size_t filesize = ftell(pfile);
-	rewind (pfile);
+	rewind(pfile);
 	return filesize;
 }
 
-template<class T>
-void SimpleCross(T v1x, T v1y, T v1z, T v2x, T v2y, T v2z, T &v3x, T &v3y,
-		T &v3z) {
-	v3x = v1y * v2z - v1z * v2y;
-	v3y = v1z * v2x - v1x * v2z;
-	v3z = v1x * v2y - v1y * v2x;
-	return;
-}
-
-template<class T>
-T SimpleDot(T v1x, T v1y, T v1z, T v2x, T v2y, T v2z) {
-	return v1x * v2x + v1y * v2y + v1z * v2z;
-}
-
-template<class T>
-T SimpleLength(T x, T y, T z) {
-	return sqrt(SimpleDot(x, y, z, x, y, z));
-}
-
-template<class T>
-void SimpleNormalize(T x, T y, T z, T &nx, T &ny, T &nz) {
-	T normal = SimpleLength(x, y, z);
-	if (normal > 0) {
-		nx = x / normal;
-		ny = y / normal;
-		nz = z / normal;
-	} else {
-		nx = 0.0f;
-		ny = 0.0f;
-		nz = 0.0f;
-	}
-	return;
-}
-
-template<class T>
-void SimpleNormalize(T &x, T &y, T &z) {
-
-	T normal = SimpleLength(x, y, z);
-	if (normal > 0) {
-		x = x / normal;
-		y = y / normal;
-		z = z / normal;
-	} else {
-		x = 0.0f;
-		y = 0.0f;
-		z = 0.0f;
-	}
-	return;
-}
-
-static GLfloat view_rotx = 0.0;// view_roty = 0.0;
-static FILE * vertshader_file = NULL, * fragshader_file = NULL;
+static GLfloat view_rotx = 0.0; // view_roty = 0.0;
+static FILE * vertshader_file = NULL, *fragshader_file = NULL;
 
 static GLint u_matrix = -1;
 static GLint attr_pos = 0, attr_color = 1;
 
-void set_vertshader_file(FILE * pfile){
+void set_vertshader_file(FILE * pfile) {
 	vertshader_file = pfile;
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(vertshader_file));
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", vertshader_file);
 }
 
-void set_fragshader_file(FILE * pfile){
+void set_fragshader_file(FILE * pfile) {
 	fragshader_file = pfile;
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d", filelen(fragshader_file));
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%d\n", fragshader_file);
+}
+
+//template <class Tfloat>
+//inline void rotation_row_vector(int u, v, w)
+
+template<class Tfloat>
+void rotation_matrix(Tfloat u, Tfloat v, Tfloat w, Tfloat theta, Tfloat *m) {
+	//generate the rotation matrix, rotate theta around vector (u, v, w) at point (a, b, c)
+
+	//create template matrix and direction vector
+	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
+	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
+	Matrix < Tfloat, 3, 1, ColMajor > vec(u, v, w);
+
+	//normalize the direction vector
+	vec.normalize();
+	u = vec(0);
+	v = vec(1);
+	w = vec(2);
+
+	//temp variables
+	Tfloat costheta = cos(theta), sintheta = sin(theta);
+	Tfloat complement_costheta = 1 - costheta;
+	Tfloat u2 = u * u;
+	Tfloat v2 = v * v;
+	Tfloat w2 = w * w;
+	Tfloat cos_part, sin_part;
+
+	//3 x 3 rotation
+	mat(0, 0) = u2 + (v2 + w2) * costheta;
+	mat(1, 1) = v2 + (u2 + w2) * costheta;
+	mat(2, 2) = w2 + (u2 + v2) * costheta;
+	cos_part = u * v * (complement_costheta);
+	sin_part = w * sintheta;
+	mat(0, 1) = cos_part - sin_part;
+	mat(1, 0) = cos_part + sin_part;
+	cos_part = u * w * (complement_costheta);
+	sin_part = v * sintheta;
+	mat(0, 2) = cos_part + sin_part;
+	mat(2, 0) = cos_part - sin_part;
+	cos_part = v * w * (complement_costheta);
+	sin_part = u * sintheta;
+	mat(1, 2) = cos_part - sin_part;
+	mat(1, 2) = cos_part + sin_part;
+
+//	//fill zeros
+//	for (int i = 0; i < 3; ++i){
+//		mat(i, 3) = 0;
+//		mat(3, i) = 0;
+//	}
+//	mat(3, 3) = 1;
+}
+
+template<class Tfloat>
+void scale_matrix(Tfloat xs, Tfloat ys, Tfloat zs, Tfloat *m) {
+	//generate the scale matrix
+
+	//create template matrix
+	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
+	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
+	mat(0, 0) = xs;
+	mat(1, 1) = ys;
+	mat(2, 2) = zs;
+}
+
+template<class Tfloat>
+void scale_matrix(Tfloat s, Tfloat *m) {
+	//generate the scale matrix
+	scale_matrix(s, s, s, m);
+}
+
+template<class Tfloat>
+void tranlation_matrix(Tfloat x, Tfloat y, Tfloat z, Tfloat *m) {
+	//generate the translation matrix
+	//create template matrix
+	Map < Matrix<Tfloat, 4, 4, ColMajor> > mat(m);
+	mat = Matrix<Tfloat, 4, 4, ColMajor>::Identity();
+	mat(0, 3) = x;
+	mat(1, 3) = y;
+	mat(2, 3) = z;
 }
 
 static void make_z_rot_matrix(GLfloat angle, GLfloat *m) {
@@ -145,22 +189,25 @@ static void mul_matrix(GLfloat *prod, const GLfloat *a, const GLfloat *b) {
 }
 
 static void draw(void) {
-	static const GLfloat verts[3][2] = { { -1, -1 }, { 1, -1 }, { 0, 1 } };
-	static const GLfloat colors[3][3] =
-			{ { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
-	GLfloat mat[16], rot[16], scale[16];
+//	GLfloat mat[16], rot[16], scale[16];
+//
+//	/* Set modelview/projection matrix */
+//	make_z_rot_matrix(view_rotx, rot);
+//	make_scale_matrix(0.5, 0.5, 0.5, scale);
+//	mul_matrix(mat, rot, scale);
+//	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, mat);
 
-	/* Set modelview/projection matrix */
-	make_z_rot_matrix(view_rotx, rot);
-	make_scale_matrix(0.5, 0.5, 0.5, scale);
-	mul_matrix(mat, rot, scale);
-	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, mat);
+	Matrix<GLfloat, 4, 4, ColMajor > pro_mat, rmat, smat, tmat;
+
+	scale_matrix(0.5f, smat.data());
+	rotation_matrix(0.0f, 0.0f, 1.0f, view_rotx, rmat.data());
+	pro_mat = smat * rmat;
+	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, pro_mat.data());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	{
-		glVertexAttribPointer(attr_pos, 2, GL_FLOAT, GL_FALSE, 0, verts);
-		glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, colors);
+
 		glEnableVertexAttribArray(attr_pos);
 		glEnableVertexAttribArray(attr_color);
 
@@ -171,9 +218,9 @@ static void draw(void) {
 	}
 }
 
-GLuint LoadShader(FILE * vfile, FILE * ffile){
+GLuint LoadShader(FILE * vfile, FILE * ffile) {
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "loading shaders");
-	if (!vfile || !ffile){
+	if (!vfile || !ffile) {
 		exit(1);
 	}
 	size_t len;
@@ -237,7 +284,7 @@ static void create_shaders(void) {
 //			"}\n";
 ////	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s", vertShaderText);
 ////	__android_log_print(ANDROID_LOG_VERBOSE, "test", "%s", fragShaderText);
-	GLuint fragShader, vertShader, program;
+//	GLuint fragShader, vertShader, program;
 	GLint stat;
 
 //	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -263,7 +310,7 @@ static void create_shaders(void) {
 //	glAttachShader(program, fragShader);
 //	glAttachShader(program, vertShader);
 
-	program = LoadShader(vertshader_file, fragshader_file);
+	GLuint program = LoadShader(vertshader_file, fragshader_file);
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_LINK_STATUS, &stat);
@@ -287,6 +334,13 @@ static void create_shaders(void) {
 		attr_pos = glGetAttribLocation(program, "pos");
 		attr_color = glGetAttribLocation(program, "color");
 	}
+
+	static const GLfloat verts[3][2] = { { -1, -1 }, { 1, -1 }, { 0, 1 } };
+	static const GLfloat colors[3][3] =
+			{ { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
+
+	glVertexAttribPointer(attr_pos, 2, GL_FLOAT, GL_FALSE, 0, verts);
+	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, colors);
 
 	u_matrix = glGetUniformLocation(program, "modelviewProjection");
 	printf("Uniform modelviewProjection at %d\n", u_matrix);
@@ -315,7 +369,8 @@ void on_surface_changed(int width, int height) {
 }
 
 void on_touch() {
-	view_rotx += 5.0;
+	//view_rotx += 5.0;
+	view_rotx += 3.14 * 5 / 180;
 	printf("touched\n");
 	//draw();
 }

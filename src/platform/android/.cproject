@@ -29,6 +29,11 @@
 								</outputEntries>
 							</builder>
 							<tool id="com.android.gcc.compiler.563246263" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
+								<option id="com.android.gcc.option.includePath.370204962" superClass="com.android.gcc.option.includePath" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;D:\Android\android-ndk-r9b\platforms\android-19\arch-arm\usr\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;D:\Android\android-ndk-r9b\sources\cxx-stl\gnu-libstdc++\4.8\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;P:\MinGW\msys\home\jesse\Jesse_Studio\eclipse_workspace\opengles2tutorial\src\3rdparty&quot;"/>
+								</option>
 								<inputType id="com.android.gcc.inputType.1889954542" superClass="com.android.gcc.inputType"/>
 							</tool>
 						</toolChain>
