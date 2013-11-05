@@ -2,7 +2,10 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../3rdparty/eigen3/
+#LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../3rdparty/eigen3/
+#LOCAL_C_INCLUDES := /home/jesse/local/android_toolchain/include/eigen3/
+LOCAL_C_INCLUDES := $(ANDROID_TOOLCHAIN)/include/eigen3/
+LOCAL_C_INCLUDES += $(ANDROID_SYSROOT)/include/
 
 LOCAL_MODULE    := game
 LOCAL_CFLAGS    := -Wall -Wextra

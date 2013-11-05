@@ -5,7 +5,6 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.android.toolchain.gcc.756444977" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.autotools.core.ErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -15,6 +14,7 @@
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -33,6 +33,8 @@
 									<listOptionValue builtIn="false" value="&quot;D:\Android\android-ndk-r9b\platforms\android-19\arch-arm\usr\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\Android\android-ndk-r9b\sources\cxx-stl\gnu-libstdc++\4.8\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;P:\MinGW\msys\home\jesse\Jesse_Studio\eclipse_workspace\opengles2tutorial\src\3rdparty&quot;"/>
+									<listOptionValue builtIn="false" value="/home/jesse/local/android_toolchain/include"/>
+									<listOptionValue builtIn="false" value="/home/jesse/local/android_toolchain/sysroot/usr/include"/>
 								</option>
 								<inputType id="com.android.gcc.inputType.1889954542" superClass="com.android.gcc.inputType"/>
 							</tool>
