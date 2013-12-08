@@ -8,6 +8,11 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+#include <utility>
+#include <Eigen/Dense>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>       // Output data structure
+#include <assimp/postprocess.h> // Post processing flags
 #include <string>
 #include <algorithm>
 #include <iostream>
@@ -17,7 +22,6 @@ extern "C" {
 #include <string.h>
 #include <cstdlib>
 #include <cstdio>
-#include <Eigen/Dense>
 
 using namespace std;
 
@@ -300,6 +304,8 @@ GLuint LoadShader(FILE * vfile, FILE * ffile) {
 }
 
 static void create_shaders(void) {
+  Assimp::Importer importer;
+
 //	static const char *fragShaderText = "precision mediump float;\n"
 //			"varying vec4 v_color;\n"
 //			"void main() {\n"
