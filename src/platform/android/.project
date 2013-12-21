@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>OpenGLES2Tutorial</name>
+	<name>opengles2tutorial</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -50,13 +50,13 @@
 		<link>
 			<name>common</name>
 			<type>2</type>
-			<locationURI>COMMON_LOC</locationURI>
+			<locationURI>COMMON</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
-			<name>COMMON_LOC</name>
-			<value>$%7BPARENT-1-PROJECT_LOC%7D/common</value>
+			<name>COMMON</name>
+			<value>file:/home/jesse/Jesse_Studio/eclipse/opengles2tutorial/src/platform/common</value>
 		</variable>
 	</variableList>
 </projectDescription>

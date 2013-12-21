@@ -9,7 +9,7 @@ extern "C" {
 }
 #endif
 #include <utility>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>       // Output data structure
 #include <assimp/postprocess.h> // Post processing flags
