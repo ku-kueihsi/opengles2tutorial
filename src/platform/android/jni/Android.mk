@@ -30,12 +30,12 @@ LOCAL_SRC_FILES := $(ANDROID_TOOLCHAIN)/lib/libpng.a
 LOCAL_EXPORT_C_INCLUDES := $(ANDROID_TOOLCHAIN)/include/
 include $(PREBUILT_STATIC_LIBRARY)
 
-#libz
-include $(CLEAR_VARS)
-LOCAL_MODULE := libz
-LOCAL_SRC_FILES := $(ANDROID_TOOLCHAIN)/lib/libz.a
-LOCAL_EXPORT_C_INCLUDES := $(ANDROID_TOOLCHAIN)/include/
-include $(PREBUILT_STATIC_LIBRARY)
+##libz
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := libz
+#LOCAL_SRC_FILES := $(ANDROID_TOOLCHAIN)/lib/libz.a
+#LOCAL_EXPORT_C_INCLUDES := $(ANDROID_TOOLCHAIN)/include/
+#include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := game
@@ -45,6 +45,6 @@ LOCAL_CFLAGS    += -Wno-psabi -march=armv7-a -mfloat-abi=softfp -mfpu=vfp -ffunc
 LOCAL_CPPFLAGS  += -std=c++11 -O2
 LOCAL_CPPFLAGS  += -Wno-psabi -march=armv7-a -mfloat-abi=softfp -mfpu=vfp -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -DANDROID -Wa,--noexecstack -std=gnu++0x -mtune=cortex-a9 -march=armv7-a -mhard-float -mfloat-abi=softfp -mfpu=vfpv3-d16 -g -g -gdwarf-2 -marm -O0 -fno-omit-frame-pointer -Wall -Wno-psabi -W -D_REENTRANT -fPIE -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB 
 LOCAL_SRC_FILES := ../../common/game.cpp jni.cpp assets_file_io.cpp
-LOCAL_STATIC_LIBRARIES := assimp bullet libpng libz
-LOCAL_LDLIBS 	:= -lstdc++ -llog -lGLESv2 -lEGL -landroid
+LOCAL_STATIC_LIBRARIES := assimp bullet libpng
+LOCAL_LDLIBS 	:= -lz -lstdc++ -llog -lGLESv2 -lEGL -landroid
 include $(BUILD_SHARED_LIBRARY)
