@@ -15,6 +15,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+//avoid warning about unused parameter
+#define DUMMY(x) (void) (x)
+
 /*
  * Class:     com_opengltutorial_opengles2tutorial_GameLibJNIWrapper
  * Method:    load
@@ -57,6 +61,7 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 
 JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper_load
   (JNIEnv * env, jclass, jobject assetManager){
+	DUMMY(env);
 	AAssetManager* mgr = AAssetManager_fromJava(env, assetManager);
 	assert(NULL != mgr);
 	android_fopen_set_asset_manager(mgr);
@@ -66,6 +71,8 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 (JNIEnv * env, jclass cls) {
 //	g_env = env; // global variables, containing assets info
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "init gl");
+	DUMMY(env);
+	DUMMY(cls);
 	set_vertshader_file(android_fopen((const char*) "simplevert.glsl", (const char*)"r"));
 	set_fragshader_file(android_fopen((const char*) "simplefrag.glsl", (const char*)"r"));
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "pass shader files done");
@@ -74,6 +81,8 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 
 JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper_on_1surface_1changed
 (JNIEnv * env, jclass cls, jint width, jint height) {
+	DUMMY(env);
+	DUMMY(cls);
 	int w = width;
 	int h = height;
 	on_surface_changed(w, h);
@@ -81,11 +90,15 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 
 JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper_on_1draw_1frame
 (JNIEnv * env, jclass cls) {
+	DUMMY(env);
+	DUMMY(cls);
 	on_draw_frame();
 }
 
 JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper_on_1touch
 (JNIEnv * env, jclass cls) {
+	DUMMY(env);
+	DUMMY(cls);
 	on_touch();
 }
 
