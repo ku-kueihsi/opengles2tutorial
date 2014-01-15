@@ -3,3 +3,4 @@ APP_ABI    				:= armeabi
 NDK_TOOLCHAIN_VERSION   := clang
 #NDK_TOOLCHAIN_VERSION   := 4.8
 APP_CPPFLAGS 			+= -std=c++11
+APP_PLATFORM 			:= android-15
