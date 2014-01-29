@@ -8,6 +8,7 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <jni.h>
+//#include <fstream>
 /* Header for class com_opengltutorial_opengles2tutorial_GameLibJNIWrapper */
 
 #ifndef _Included_com_opengltutorial_opengles2tutorial_GameLibJNIWrapper
@@ -76,6 +77,10 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 	set_vertshader_file(android_fopen((const char*) "simplevert.glsl", (const char*)"r"));
 	set_fragshader_file(android_fopen((const char*) "simplefrag.glsl", (const char*)"r"));
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "pass shader files done");
+	////file io test
+//	std::fstream file("/sdcard/Download/test.txt", std::fstream::out);
+//	file << "Hello!\n";
+//	file.close();
 	on_surface_created();
 }
 
