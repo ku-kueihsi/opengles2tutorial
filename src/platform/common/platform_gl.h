@@ -11,8 +11,10 @@
 #ifndef GL_GLEXT_PROTOTYPES
 #define GL_GLEXT_PROTOTYPES
 #endif
-#include <GL/gl.h>
-#include <GL/glext.h>
+
+#include <GLES2/gl2.h>
+//#include <GL/gl.h>
+//#include <GL/glext.h>
 
 #endif	/* PLATFORM_GL_H */
 

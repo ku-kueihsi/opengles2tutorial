@@ -42,7 +42,7 @@ public:
     void Clear();
     void Load(const std::string &vertexStr, const std::string &fragmentStr);
     void Use();
-    const GLuint GetId(){return mProgramId;}
+    GLuint GetId(){return mProgramId;}
     
 private:
     GLuint mProgramId;
@@ -152,9 +152,9 @@ public:
     void Clear();
     void Render();//render the mesh
     void DrawOn();//core part for rendering for performance, without glEnableVertexAttribArray
-    const GLuint GetVbo(){return mVbo;}
-    const GLuint GetIbo(){return mIbo;}
-    const GLuint GetMaterialIndex(){return mMaterialIndex;}
+    GLuint GetVbo(){return mVbo;}
+    GLuint GetIbo(){return mIbo;}
+    GLuint GetMaterialIndex(){return mMaterialIndex;}
 private:
     GLuint mVbo;
     GLuint mIbo;

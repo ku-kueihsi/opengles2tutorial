@@ -74,8 +74,8 @@ JNIEXPORT void JNICALL Java_com_opengltutorial_opengles2tutorial_GameLibJNIWrapp
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "init gl");
 	DUMMY(env);
 	DUMMY(cls);
-	set_vertshader_file(android_fopen((const char*) "simplevert.glsl", (const char*)"r"));
-	set_fragshader_file(android_fopen((const char*) "simplefrag.glsl", (const char*)"r"));
+//	set_vertshader_file(android_fopen((const char*) "simplevert.glsl", (const char*)"r"));
+//	set_fragshader_file(android_fopen((const char*) "simplefrag.glsl", (const char*)"r"));
 //	__android_log_print(ANDROID_LOG_VERBOSE, "test", "pass shader files done");
 	////file io test
 //	std::fstream file("/sdcard/Download/test.txt", std::fstream::out);
