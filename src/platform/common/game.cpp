@@ -98,7 +98,7 @@ void Init_GL()
     File2Str(fileData, string(pFileName));
     fclose(fp);
 
-//    objobj.InitFromMemory(fileData);
+    objobj.InitFromMemory(fileData);
     objobj.SetShaderIndex(programobj.GetId());
     objobj.SetUpShader();
 
@@ -163,12 +163,12 @@ void on_touch() {
 	//view_rotx += 5.0;
 //	view_rotx += 3.14 * 5 / 180;
 //	printf("touched\n");
-	//draw();
+//	draw();
 }
 
 void on_draw_frame() {
-	//Render_GL();
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Render_GL();
 //	draw();
 //    view_rotx += 5.0;
 	// Reset transformations
