@@ -347,8 +347,14 @@ static void create_shaders(void) {
 //	program = glCreateProgram();
 //	glAttachShader(program, fragShader);
 //	glAttachShader(program, vertShader);
+//	GLuint program = LoadShader(vertshader_file, fragshader_file);
 
-	GLuint program = LoadShader(vertshader_file, fragshader_file);
+	FILE *vf = fopen("/sdcard/Download/shader/simplevert2.glsl", "r");
+	FILE *ff = fopen("/sdcard/Download/shader/simplefrag2.glsl", "r");
+	GLuint program = LoadShader(vf, ff);
+	fclose(vf);
+	fclose(ff);
+
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_LINK_STATUS, &stat);
