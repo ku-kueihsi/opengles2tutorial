@@ -246,13 +246,20 @@ static void draw(void) {
 
 	{
 
-		glEnableVertexAttribArray(attr_pos);
-		glEnableVertexAttribArray(attr_color);
+//		glEnableVertexAttribArray(attr_pos);
+//		glEnableVertexAttribArray(attr_color);
+//
+//		glDrawArrays(GL_TRIANGLES, 0, 3);
+//
+//		glDisableVertexAttribArray(attr_pos);
+//		glDisableVertexAttribArray(attr_color);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glDisableVertexAttribArray(attr_pos);
-		glDisableVertexAttribArray(attr_color);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
 	}
 }
 
@@ -380,30 +387,36 @@ static void create_shaders(void) {
 
 	glGenBuffers(2, dataBuffers);
 
-	if (1) {
-		/* test setting attrib locations */
-		glBindAttribLocation(program, attr_pos, "pos");
-		glBindAttribLocation(program, attr_color, "color");
-		glLinkProgram(program); /* needed to put attribs into effect */
-	} else {
-		/* test automatic attrib locations */
-		attr_pos = glGetAttribLocation(program, "pos");
-		attr_color = glGetAttribLocation(program, "color");
-	}
+//	if (1) {
+//		/* test setting attrib locations */
+//		glBindAttribLocation(program, attr_pos, "pos");
+//		glBindAttribLocation(program, attr_color, "color");
+//		glLinkProgram(program); /* needed to put attribs into effect */
+//	} else {
+//		/* test automatic attrib locations */
+//		attr_pos = glGetAttribLocation(program, "pos");
+//		attr_color = glGetAttribLocation(program, "color");
+//	}
 
-//	vector<GLfloat > verts = {-1, -1, 0, 1, -1, 0, 0, 1, 0};
-//	vector<GLfloat > colors = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+	vector<GLfloat > verts2 = {-1, -1, 0, 1, -1, 0, 0, 1, 0};
+	vector<GLfloat > colors2 = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+	FillDataBuffer(dataBuffers[0], verts2, GL_STATIC_DRAW);
+	FillDataBuffer(dataBuffers[1], colors2, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[0]);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, dataBuffers[1]);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 //
 //	glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, &verts[0]);
 //	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, &colors[0]);
 
-	static const GLfloat verts[9] = {-1, -1, 0, 1, -1, 0, 0, 1, 0};
-	static const GLfloat colors[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+//	static const GLfloat verts[9] = {-1, -1, 0, 1, -1, 0, 0, 1, 0};
+//	static const GLfloat colors[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
 //	glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, verts);
 //	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, colors);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verts);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verts);
+//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
 
 	u_matrix = glGetUniformLocation(program, "modelviewProjection");
 //	printf("Uniform modelviewProjection at %d\n", u_matrix);
