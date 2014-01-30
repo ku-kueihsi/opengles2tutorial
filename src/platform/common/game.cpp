@@ -66,8 +66,8 @@ static void create_shaders(void)
 //    GLint stat;
 
     string vstr, fstr;
-    File2Str(vstr, "/sdcard/Download/shader/simplevert.glsl");
-    File2Str(fstr, "/sdcard/Download/shader/simplefrag.glsl");
+    File2Str(vstr, "/sdcard/Download/shader/simplevert2.glsl");
+    File2Str(fstr, "/sdcard/Download/shader/simplefrag2.glsl");
 
     programobj.Load(vstr, fstr);
 }
@@ -98,7 +98,7 @@ void Init_GL()
     File2Str(fileData, string(pFileName));
     fclose(fp);
 
-    objobj.InitFromMemory(fileData);
+//    objobj.InitFromMemory(fileData);
     objobj.SetShaderIndex(programobj.GetId());
     objobj.SetUpShader();
 

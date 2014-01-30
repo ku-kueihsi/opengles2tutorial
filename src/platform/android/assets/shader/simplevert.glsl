@@ -1,20 +1,15 @@
-#ifdef GLES2
 precision mediump float;
-#extension GL_EXT_separate_shader_objects 
-layout (location = 0) attribute vec4 a_Position;
-layout (location = 1) attribute vec3 a_Normal;
-layout (location = 2) attribute vec2 a_TextureCoordinates;
-layout (location = 3) attribute vec3 a_boneIds;
-layout (location = 4) attribute vec3 a_boneWeights;
-#else//PC GL
-
-#version 330
-layout (location = 0) in vec3 a_Position;
-layout (location = 1) in vec3 a_Normal;
-layout (location = 2) in vec2 a_TextureCoordinates;
-layout (location = 3) in vec3 a_boneIds;
-layout (location = 4) in vec3 a_boneWeights;
+#extension GL_EXT_separate_shader_objects : enable
+#ifdef GL_EXT_separate_shader_objects
+#define UseLayout(x) layout(location = x)
+#else
+#define UseLayout(x)
 #endif
+UseLayout(0) attribute vec4 a_Position;
+UseLayout(1) attribute vec3 a_Normal;
+UseLayout(2) attribute vec2 a_TextureCoordinates;
+UseLayout(3) attribute vec3 a_boneIds;
+UseLayout(4) attribute vec3 a_boneWeights;
 
 const int kMaxBoneWeights = 3;
 const int kMaxBones = 100;

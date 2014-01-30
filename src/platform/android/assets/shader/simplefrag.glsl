@@ -1,13 +1,5 @@
-#ifdef GLES2
-
 precision mediump float;
-#extension GL_EXT_separate_shader_objects 
-
-#else //PC GL 330+
-
-#version 330
-
-#endif
+#extension GL_EXT_separate_shader_objects : enable
 
 uniform sampler2D u_TextureUnit;
 varying vec2 v_TextureCoordinates;
