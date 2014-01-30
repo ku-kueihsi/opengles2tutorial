@@ -5,7 +5,7 @@ precision mediump float;
 #else
 #define UseLayout(x)
 #endif
-UseLayout(0) attribute vec4 a_Position;
+UseLayout(0) attribute vec3 a_Position;
 UseLayout(1) attribute vec3 a_Normal;
 UseLayout(2) attribute vec2 a_TextureCoordinates;
 UseLayout(3) attribute vec3 a_boneIds;
@@ -36,6 +36,7 @@ void main()
 
     v_Normal = (world_mat * BoneTransform * vec4(a_Normal, 0.0)).xyz;
     gl_Position = modelviewProjection * BoneTransform * vec4(a_Position, 1.0);
+//    gl_Position = modelviewProjection * vec4(a_Position, 1.0);
 
 //    debugColor[a_boneWeights[a_boneIds[0]], a_boneWeights[a_boneIds[1]], 1, 1];
     debugColor = vec4(a_boneIds[0], 0, 0, 1);
@@ -48,12 +49,3 @@ void main()
 }
 
 
-//uniform mat4 modelviewProjection;
-//attribute vec4 pos;
-//attribute vec4 color;
-//varying vec4 v_color;
-//void main() {
-//   gl_Position = modelviewProjection * pos;
-//   //gl_Position = ftransform();
-//   v_color = color;
-//}
