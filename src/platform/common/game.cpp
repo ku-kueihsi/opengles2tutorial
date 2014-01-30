@@ -59,6 +59,8 @@ static GLint attr_pos = 0, attr_color = 1;
 
 static GLint screen_width = 0;
 static GLint screen_height = 0;
+
+GLuint dataBuffers[2];
 //end of GL global
 
 void set_vertshader_file(FILE * pfile) {
@@ -303,6 +305,14 @@ GLuint LoadShader(FILE * vfile, FILE * ffile) {
 	return program;
 }
 
+inline void FillDataBuffer(GLuint bufferIndex, const vector<GLfloat > &data, GLenum usage)
+{
+    assert(bufferIndex);
+    glBindBuffer(GL_ARRAY_BUFFER, bufferIndex);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (GLfloat) * data.size(), data.data(), usage);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 static void create_shaders(void) {
   Assimp::Importer importer;
 
@@ -368,6 +378,8 @@ static void create_shaders(void) {
 
 	glUseProgram(program);
 
+	glGenBuffers(2, dataBuffers);
+
 	if (1) {
 		/* test setting attrib locations */
 		glBindAttribLocation(program, attr_pos, "pos");
@@ -379,17 +391,24 @@ static void create_shaders(void) {
 		attr_color = glGetAttribLocation(program, "color");
 	}
 
-	static const GLfloat verts[3][2] = { { -1, -1 }, { 1, -1 }, { 0, 1 } };
-	static const GLfloat colors[3][3] =
-			{ { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
+//	vector<GLfloat > verts = {-1, -1, 0, 1, -1, 0, 0, 1, 0};
+//	vector<GLfloat > colors = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+//
+//	glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, &verts[0]);
+//	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, &colors[0]);
 
-	glVertexAttribPointer(attr_pos, 2, GL_FLOAT, GL_FALSE, 0, verts);
-	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, colors);
+	static const GLfloat verts[9] = {-1, -1, 0, 1, -1, 0, 0, 1, 0};
+	static const GLfloat colors[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+//	glVertexAttribPointer(attr_pos, 3, GL_FLOAT, GL_FALSE, 0, verts);
+//	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, colors);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, verts);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
 
 	u_matrix = glGetUniformLocation(program, "modelviewProjection");
-	printf("Uniform modelviewProjection at %d\n", u_matrix);
-	printf("Attrib pos at %d\n", attr_pos);
-	printf("Attrib color at %d\n", attr_color);
+//	printf("Uniform modelviewProjection at %d\n", u_matrix);
+//	printf("Attrib pos at %d\n", attr_pos);
+//	printf("Attrib color at %d\n", attr_color);
 }
 
 void on_surface_created() {
