@@ -98,6 +98,7 @@ void Init_GL()
     File2Str(fileData, string(pFileName));
     fclose(fp);
 
+    objobj.setResourcePath("/sdcard/Download/texture");
     objobj.InitFromMemory(fileData);
     objobj.SetShaderIndex(programobj.GetId());
     objobj.SetUpShader();

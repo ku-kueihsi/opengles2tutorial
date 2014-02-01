@@ -258,6 +258,7 @@ public:
     void Render();//full render function
     void SetShaderIndex(GLuint shaderIndex){mShaderIndex = shaderIndex;}
     void SetUpShader();
+    void setResourcePath(std::string path);
 private:
 //    class BoneInfo
 //    {
@@ -284,6 +285,7 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> mInitTimeInSecond, mCurrentTimeInSecond;
     GLubyte mBoneLocation[MAX_BONES];
     GLuint mShaderIndex;
+    std::string mResourcePath;
 //    GLfloat mInitTimeInSecond;
 //    std::vector<BoneInfo> mBoneInfoList;
 //    std::unordered_map<std::string, GLubyte > mBoneMap;

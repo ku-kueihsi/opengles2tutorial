@@ -599,20 +599,20 @@ void RenderUnit::InitTextures(const aiScene* pScene)
             aiString path;
 
             if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-                string fullPath = string("/sdcard/Download/texture") + "/" + path.data;
+                string fullPath = mResourcePath + "/" + path.data;
                 pTmpTexture = new Texture(fullPath);
             }
             else{
-                pTmpTexture = new Texture("/sdcard/Download/texture/dummy_white.png");
+                pTmpTexture = new Texture(mResourcePath + "/" + "dummy_white.png");
             }
         }
         else{
-            pTmpTexture = new Texture("/sdcard/Download/texture/dummy_white.png");
+            pTmpTexture = new Texture(mResourcePath + "/" + "dummy_white.png");
         }
         mTexturePtrList.push_back(pTmpTexture);
     }
     if (0 == pScene->mNumMaterials){
-        mTexturePtrList.push_back(new Texture("/sdcard/Download/texture/dummy_white.png"));
+        mTexturePtrList.push_back(new Texture(mResourcePath + "/" + "dummy_white.png"));
     }
     return;
 }
@@ -666,12 +666,17 @@ void RenderUnit::Render()
     return;
 }
 
+void RenderUnit::setResourcePath(string path){
+	mResourcePath = path;
+}
+
 RenderUnit::~RenderUnit()
 {
     Clear();
 }
 
-RenderUnit::RenderUnit()
+RenderUnit::RenderUnit():
+mResourcePath("./")
 {
 }
 
