@@ -1,15 +1,34 @@
-precision mediump float;
+#define GL_ES 1
+
+#if GL_ES 
+//OpenGL ES 2.0
+//precision mediump float;
+precision lowp float;
 #extension GL_EXT_separate_shader_objects : enable
 #ifdef GL_EXT_separate_shader_objects
 #define UseLayout(x) layout(location = x)
 #else
 #define UseLayout(x)
 #endif
-UseLayout(0) attribute vec3 a_Position;
-UseLayout(1) attribute vec3 a_Normal;
-UseLayout(2) attribute vec2 a_TextureCoordinates;
-UseLayout(3) attribute vec3 a_boneIds;
-UseLayout(4) attribute vec3 a_boneWeights;
+
+#define IN attribute
+#define OUT varying
+
+#else //PC GL
+#version 330
+#define IN in
+#define OUT out
+#define UseLayout(x) layout(location = x)
+#define lowp
+#define mediump
+#define highp
+#endif
+
+UseLayout(0) IN vec3 a_Position;
+UseLayout(1) IN vec3 a_Normal;
+UseLayout(2) IN vec2 a_TextureCoordinates;
+UseLayout(3) IN vec3 a_boneIds;
+UseLayout(4) IN vec3 a_boneWeights;
 
 const int kMaxBoneWeights = 3;
 const int kMaxBones = 100;
@@ -18,9 +37,9 @@ uniform mat4 modelviewProjection;
 uniform mat4 world_mat;
 uniform mat4 gBones[kMaxBones];
 
-varying vec2 v_TextureCoordinates;
-varying vec3 v_Normal;
-varying vec4 debugColor;
+OUT vec2 v_TextureCoordinates;
+OUT vec3 v_Normal;
+OUT vec4 debugColor;
 
 void main()
 {

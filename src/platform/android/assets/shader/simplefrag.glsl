@@ -1,10 +1,25 @@
-precision mediump float;
+#define GL_ES 1
+
+#if GL_ES 
+//precision mediump float;
+precision lowp float;
 #extension GL_EXT_separate_shader_objects : enable
+#define IN varying
+
+#else //PC GL 330+
+
+#version 330
+#define IN in
+#define lowp
+#define mediump
+#define highp
+
+#endif
 
 uniform sampler2D u_TextureUnit;
-varying vec2 v_TextureCoordinates;
-varying vec3 v_Normal;
-varying vec4 debugColor;
+IN vec2 v_TextureCoordinates;
+IN vec3 v_Normal;
+IN vec4 debugColor;
 
 void main()
 {
