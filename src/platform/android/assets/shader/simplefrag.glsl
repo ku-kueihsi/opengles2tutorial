@@ -31,7 +31,7 @@ void main()
         DiffuseColor = vec4(1.0f, 1.0f, 1.0f, 1.0f) * DiffuseFactor;                                               
     }                                                                               
     else {                                                                          
-        DiffuseColor = vec4(1, 1, 1, 1);                                            
+        DiffuseColor = vec4(0.0, 0.0, 0.0, 0.0);                                            
     } 
     gl_FragColor = texture2D(u_TextureUnit, v_TextureCoordinates) * (DiffuseColor + vec4(0.1f, 0.1f, 0.1f, 0.0f));
 //    gl_FragColor = debugColor;
