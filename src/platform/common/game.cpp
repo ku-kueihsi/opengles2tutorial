@@ -3,6 +3,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#ifndef GL_GLEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES
+#endif
 #include <GLES2/gl2.h>  /* use OpenGL ES 2.x */
 #include <android/log.h>
 #ifdef __cplusplus
@@ -59,6 +62,8 @@ static GLint attr_pos = 0, attr_color = 1;
 
 static GLint screen_width = 0;
 static GLint screen_height = 0;
+
+static GLuint VBOs[4];
 //end of GL global
 
 void set_vertshader_file(FILE * pfile) {
@@ -243,15 +248,51 @@ static void draw(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	{
-
 		glEnableVertexAttribArray(attr_pos);
 		glEnableVertexAttribArray(attr_color);
 
+		glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+		glVertexAttribPointer(attr_pos, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+		glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glDisableVertexAttribArray(attr_pos);
 		glDisableVertexAttribArray(attr_color);
 	}
+
+	Matrix<GLfloat, 4, 4, ColMajor > orthoMat = Matrix<GLfloat, 4, 4, ColMajor >::Identity();
+	GLfloat orthoScale = 0.2;
+	orthoMat(0, 0) = orthoScale;
+	orthoMat(1, 1) = orthoScale;
+	orthoMat(2, 2) = orthoScale;
+	glUniformMatrix4fv(u_matrix, 1, GL_FALSE, orthoMat.data());
+	{
+	    glDisable(GL_DEPTH_TEST);
+	    glDepthMask(GL_FALSE);
+
+		glEnableVertexAttribArray(attr_pos);
+		glEnableVertexAttribArray(attr_color);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+		glVertexAttribPointer(attr_pos, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
+		glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glDisableVertexAttribArray(attr_pos);
+		glDisableVertexAttribArray(attr_color);
+
+	    glEnable(GL_DEPTH_TEST);
+	    glDepthMask(GL_TRUE);
+	}
+
 }
 
 GLuint LoadShader(FILE * vfile, FILE * ffile) {
@@ -373,17 +414,33 @@ static void create_shaders(void) {
 		attr_color = glGetAttribLocation(program, "color");
 	}
 
+	glGenBuffers(4, VBOs);
+//    glBindVertexArray(VBOs[0]);
+
 	static const GLfloat verts[3][2] = { { -1, -1 }, { 1, -1 }, { 0, 1 } };
 	static const GLfloat colors[3][3] =
 			{ { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
+	static const GLfloat hudVertices[3][2] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}};
+	static const GLfloat vertexColors[3][3] =
+				{ { 0.5f, 0, 0 }, { 0, 0.5f, 0 }, { 0, 0, 0.5f } };
 
-	glVertexAttribPointer(attr_pos, 2, GL_FLOAT, GL_FALSE, 0, verts);
-	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, colors);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (GLfloat) * 6, verts, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof (GLfloat) * 9, colors, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof (GLfloat) * 6, hudVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[3]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof (GLfloat) * 9, vertexColors, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+//	glVertexAttribPointer(attr_pos, 2, GL_FLOAT, GL_FALSE, 0, verts);
+//	glVertexAttribPointer(attr_color, 3, GL_FLOAT, GL_FALSE, 0, colors);
 
 	u_matrix = glGetUniformLocation(program, "modelviewProjection");
-	printf("Uniform modelviewProjection at %d\n", u_matrix);
-	printf("Attrib pos at %d\n", attr_pos);
-	printf("Attrib color at %d\n", attr_color);
+//	printf("Uniform modelviewProjection at %d\n", u_matrix);
+//	printf("Attrib pos at %d\n", attr_pos);
+//	printf("Attrib color at %d\n", attr_color);
 }
 
 void on_surface_created() {
